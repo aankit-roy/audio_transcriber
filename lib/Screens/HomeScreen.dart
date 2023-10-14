@@ -1,8 +1,12 @@
-import 'package:audio_transcriber/Screens/RecordingScreen.dart';
+
 import 'package:audio_transcriber/Util/DataModel.dart';
+
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:animated_bottom_navigation_bar/animated_bottom_navigation_bar.dart';
+
+
+
 
 
  class HomeScreen extends StatefulWidget{
@@ -38,6 +42,7 @@ class _HomeScreenState extends State<HomeScreen> {
 
      
    ];
+
    int pageIndex=0;
 
 

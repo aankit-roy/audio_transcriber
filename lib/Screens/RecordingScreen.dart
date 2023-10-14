@@ -1,13 +1,109 @@
+import 'dart:developer';
+
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-// import 'package:record/record.dart';
-// import 'package:audioplayers/audioplayers.dart';
+import 'package:record/record.dart';
+import 'package:tuple/tuple.dart';
+import 'package:font_awesome_flutter/font_awesome_flutter.dart';
+import 'package:tuple/tuple.dart';
+
+import 'package:path_provider/path_provider.dart';
+import 'dart:convert';
+import 'dart:io';
+import 'package:flutter_sound/flutter_sound.dart';
+import 'package:permission_handler/permission_handler.dart';
+
 class RecordingScreen extends StatefulWidget{
   @override
   State<RecordingScreen> createState() => _RecordingScreen();
 }
 
 class _RecordingScreen extends State<RecordingScreen> {
+
+  final recorder=FlutterSoundRecorder();
+  bool isRecorderReady=false;
+  @override
+  void initState() {
+
+    super.initState();
+    initRecorder();
+  }
+  @override
+  void dispose() {
+    recorder.closeRecorder();
+    super.dispose();
+  }
+
+  //accessing microphone
+  Future initRecorder() async {
+    final status=await Permission.microphone.request();
+    if(status!=PermissionStatus.granted){
+      throw "Permission not granted";
+    }
+    await recorder.openRecorder();
+    isRecorderReady=true;
+    recorder.setSubscriptionDuration(const Duration(milliseconds: 500));
+  }
+
+  Future  startRecording() async {
+    // final filePath = await getTemporaryDirectory().then((dir) {
+    //   return dir.path + '/your_audio_filename.mp3';
+    // });
+
+    // await recorder.startRecorder(toFile: filePath);
+    // return filePath; // Return the file path
+    await recorder.startRecorder(toFile: 'audio');
+
+  }
+
+  Future  stopRecording() async {
+    if(!isRecorderReady)
+      return;
+   final path = await recorder.stopRecorder();
+    final audioFile=File(path!);
+    print("Recording audio: $audioFile");
+  }
+  //
+  // late final Record _recorder;
+  // bool _isRecording = false;
+  // String? _filePath;
+  // _startRecording() async {
+  //   bool hasPermission = await _recorder.hasPermission();
+  //
+  //   if (hasPermission) {
+  //     setState(() {
+  //       _isRecording = true;
+  //       _filePath = null;
+  //     });
+  //
+  //     await _recorder.start();
+  //   }
+  // }
+  // _stopRecording() async {
+  //   final path = await _recorder.stop();
+  //
+  //   log('Recording complete, path: $path');
+  //
+  //   if (path != null) {
+  //     setState(() {
+  //       _isRecording = false;
+  //       _filePath = path;
+  //     });
+  //   }
+  // }
+  //
+  // @override
+  // void initState() {
+  //   _recorder = Record();
+  //   super.initState();
+  // }
+  //
+  // @override
+  // void dispose() {
+  //   _recorder.dispose();
+  //   super.dispose();
+  // }
+
   @override
   Widget build(BuildContext context) {
     // TODO: implement build
@@ -28,14 +124,30 @@ class _RecordingScreen extends State<RecordingScreen> {
             Column(
               crossAxisAlignment: CrossAxisAlignment.center,
               children: [
+                StreamBuilder<RecordingDisposition>(
+                  stream: recorder.onProgress,
+
+                  builder: (context,snapshot){
+                  final duration=
+                      snapshot.hasData ? snapshot.data!.duration:Duration.zero;
+                  String twoDigits(int n) =>n.toString().padLeft(2,"0");
+                  final twoDigitMinutes=twoDigits(duration.inMinutes.remainder(60));
+                  final twoDigitSeconds=twoDigits(duration.inSeconds.remainder(60));
+                  return Text("$twoDigitMinutes:$twoDigitSeconds",style: TextStyle(
+                      fontSize: 50,
+                      fontWeight: FontWeight.bold,
+                      color: Colors.black87
+                  ),);
+
+                },
 
 
 
-                Text("10:05:00",style: TextStyle(
-                  fontSize: 50,
-                  fontWeight: FontWeight.bold,
-                  color: Colors.black87
-                ),),
+                ),
+
+
+
+
                 Center(
                   child: Padding(
                     padding: const EdgeInsets.all(10.0),
@@ -87,10 +199,22 @@ class _RecordingScreen extends State<RecordingScreen> {
                         color: Colors.blue,
                       ),
                       child: IconButton(
-                        onPressed: (){
+                        onPressed: () async{
+                          if(recorder.isRecording){
+                            await stopRecording();
+                          }
+                          else{
+                            await startRecording();
+                          }
+                          setState(() {
+
+                          });
+
 
                         },
-                        icon: const Icon(Icons.done,size: 40,color: Colors.black87,),
+                        icon:  Icon(recorder.isRecording ?
+                            Icons.stop : Icons.mic,
+                          size: 40,color: Colors.black87,),
                       )
 
                   ),
