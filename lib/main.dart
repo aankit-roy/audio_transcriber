@@ -4,6 +4,7 @@ import 'dart:io';
 import 'package:audio_transcriber/Screens/HomeScreen.dart';
 import 'package:flutter/material.dart';
 import 'package:audio_transcriber/Screens/RecordingScreen.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_sound/flutter_sound.dart';
 import 'package:permission_handler/permission_handler.dart';
 
@@ -34,7 +35,7 @@ class MyApp extends StatelessWidget {
 
 class MainScreen extends StatefulWidget {
   @override
-  _MainScreenState createState() => _MainScreenState();
+  State<MainScreen> createState() => _MainScreenState();
 }
 
 class _MainScreenState extends State<MainScreen> {
@@ -83,8 +84,7 @@ class _MainScreenState extends State<MainScreen> {
           }),
       floatingActionButtonLocation: FloatingActionButtonLocation.centerFloat,
 
-      body: SafeArea(
-
+      body: Container(
           child: HomeScreen()),
     );
   }
