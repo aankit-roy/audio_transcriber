@@ -39,48 +39,7 @@ class MainScreen extends StatefulWidget {
 
 class _MainScreenState extends State<MainScreen> {
 
-  // @override
-  // void initState() {
-  //    initRecorder();
-  //   super.initState();
-  // }
-  // @override
-  // void dispose() {
-  //    recorder.closeRecorder();
-  //   super.dispose();
-  // }
-  // final recorder=FlutterSoundRecorder();
-  // //accessing microphone
-  // Future initRecorder() async {
-  //   final status=await Permission.microphone.request();
-  //   if(status!=PermissionStatus.granted){
-  //     throw "Permission not granted";
-  //   }
-  //   await recorder.openRecorder();
-  //   recorder.setSubscriptionDuration(const Duration(milliseconds: 1000));
-  // }
-  //
-  // Future<String> startRecording() async {
-  //   final filePath = await getTemporaryDirectory().then((dir) {
-  //     return dir.path + '/your_audio_filename.mp3';
-  //   });
-  //
-  //   await recorder.startRecorder(toFile: filePath);
-  //   return filePath; // Return the file path
-  // }
-  //
-  // Future<void> stopRecording() async {
-  //   await recorder.stopRecorder();
-  // }
 
-  // Future startRecord() async{
-  //   await recorder.startRecorder(toFile: "audio");
-  // }
-  // Future stopRecord()async{
-  //   final filePath =await recorder.startRecorder();
-  //   final file= File(filePath);
-  //   print("Recorded file path: $file");
-  // }
 
 
   @override
@@ -111,20 +70,7 @@ class _MainScreenState extends State<MainScreen> {
           ),
           backgroundColor: Colors.blue,
           onPressed: () {
-           // if(recorder.isRecording){
-           //  stopRecording();
-           //  setState(() {
-           //
-           //  });
-           //
-           //
-           // }
-           // else {
-           //   startRecording();
-           //   setState(() {
-           //
-           //   });
-           // }
+
 
             Navigator.push(context, MaterialPageRoute(builder:  (context){
               return RecordingScreen();
@@ -137,7 +83,9 @@ class _MainScreenState extends State<MainScreen> {
           }),
       floatingActionButtonLocation: FloatingActionButtonLocation.centerFloat,
 
-      body: SafeArea(child: HomeScreen()),
+      body: SafeArea(
+
+          child: HomeScreen()),
     );
   }
 }

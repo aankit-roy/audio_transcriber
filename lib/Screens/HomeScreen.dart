@@ -50,6 +50,7 @@ class _HomeScreenState extends State<HomeScreen> {
   Widget build(BuildContext context) {
     // TODO: implement build
      return SafeArea(
+       bottom: false,
        child: Stack(
          children: <Widget>[
            CustomScrollView(

@@ -52,6 +52,7 @@ dev_dependencies:
   tuple: ^2.0.0
   printing: ^5.7.4
   font_awesome_flutter: ^10.0.0
+  avatar_glow: ^2.0.2
 
   # The "flutter_lints" package below contains a set of recommended lints to
   # encourage good coding practices. The lint set provided by the package is

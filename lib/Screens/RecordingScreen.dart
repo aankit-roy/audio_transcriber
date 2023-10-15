@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'dart:developer';
 
 import 'package:flutter/cupertino.dart';
@@ -12,6 +13,7 @@ import 'dart:convert';
 import 'dart:io';
 import 'package:flutter_sound/flutter_sound.dart';
 import 'package:permission_handler/permission_handler.dart';
+import 'package:avatar_glow/avatar_glow.dart';
 
 class RecordingScreen extends StatefulWidget{
   @override
@@ -21,6 +23,10 @@ class RecordingScreen extends StatefulWidget{
 class _RecordingScreen extends State<RecordingScreen> {
 
   final recorder=FlutterSoundRecorder();
+  Duration recordedTime=Duration.zero;
+  bool isPaused = false; // Track the pause state
+  late Timer recordingTimer;
+
   bool isRecorderReady=false;
   @override
   void initState() {
@@ -46,14 +52,35 @@ class _RecordingScreen extends State<RecordingScreen> {
   }
 
   Future  startRecording() async {
+    if(recorder.isPaused){
+      await recorder.resumeRecorder();
+
+    }
+    else {
+      await recorder.startRecorder(toFile: 'audio');
+
+    }
+      // await recorder.startRecorder(toFile: 'audio');
+
+
+
+
+
     // final filePath = await getTemporaryDirectory().then((dir) {
     //   return dir.path + '/your_audio_filename.mp3';
     // });
 
     // await recorder.startRecorder(toFile: filePath);
     // return filePath; // Return the file path
-    await recorder.startRecorder(toFile: 'audio');
 
+
+  }
+
+
+  Future<void> pauseRecording() async {
+    if (recorder.isRecording) {
+      await recorder.pauseRecorder();
+    }
   }
 
   Future  stopRecording() async {
@@ -181,10 +208,30 @@ class _RecordingScreen extends State<RecordingScreen> {
                       color: Colors.white,
                     ),
                     child: IconButton(
-                      onPressed: (){
+
+                      onPressed: ()async{
+
+                             if (recorder.isRecording) {
+                                 await pauseRecording();
+                                   } else {
+                             await startRecording();
+                                       }
+                             setState(() {}); // Update the UI
+
+
 
                       },
-                      icon: Icon(Icons.pause,size: 40,color: Colors.black87,),
+                      icon: Icon(recorder.isPaused ?Icons.play_arrow
+
+
+                          :Icons.pause,
+
+
+                        size: 40,
+
+                        color: Colors.black87,
+
+                      ),
                     )
 
 
@@ -244,10 +291,9 @@ class _RecordingScreen extends State<RecordingScreen> {
 
 
                 ],
+
               ),
             ),
-            SizedBox(height: 50,)
-
 
 
 
