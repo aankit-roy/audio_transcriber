@@ -1,19 +1,23 @@
 import 'dart:async';
-import 'dart:developer';
+import 'dart:typed_data';
+// import 'dart:developer';
+import 'package:intl/intl.dart';
+import 'package:path/path.dart';
 
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:record/record.dart';
-import 'package:tuple/tuple.dart';
-import 'package:font_awesome_flutter/font_awesome_flutter.dart';
-import 'package:tuple/tuple.dart';
+import 'package:audioplayers/audioplayers.dart';
+
+
+// import 'package:font_awesome_flutter/font_awesome_flutter.dart';
+// import 'package:tuple/tuple.dart';
 
 import 'package:path_provider/path_provider.dart';
-import 'dart:convert';
+// import 'dart:convert';
 import 'dart:io';
 import 'package:flutter_sound/flutter_sound.dart';
 import 'package:permission_handler/permission_handler.dart';
-import 'package:avatar_glow/avatar_glow.dart';
+// import 'package:avatar_glow/avatar_glow.dart';
 
 class RecordingScreen extends StatefulWidget {
   @override
@@ -25,6 +29,7 @@ class _RecordingScreen extends State<RecordingScreen> {
   Duration recordedTime = Duration.zero;
   bool isPaused = false; // Track the pause state
   late Timer recordingTimer;
+  final AudioPlayer audioPlayer = AudioPlayer();
 
   bool isRecorderReady = false;
 
@@ -42,30 +47,66 @@ class _RecordingScreen extends State<RecordingScreen> {
 
   //accessing microphone
   Future initRecorder() async {
-    final status = await Permission.microphone.request();
-    if (status != PermissionStatus.granted) {
-      throw "Permission not granted";
+    final microphoneStatus = await Permission.microphone.request();
+    if (microphoneStatus != PermissionStatus.granted) {
+      await Permission.microphone.request();
     }
-    await recorder.openRecorder();
-    isRecorderReady = true;
-    recorder.setSubscriptionDuration(const Duration(milliseconds: 500));
+    final storageStatus = await Permission.storage.request();
+    if (storageStatus != PermissionStatus.granted) {
+      await Permission.storage.request();
+    }
+    if (microphoneStatus == PermissionStatus.granted && storageStatus == PermissionStatus.granted) {
+      await recorder.openRecorder();
+      isRecorderReady = true;
+      recorder.setSubscriptionDuration(const Duration(milliseconds: 500));
+    } else {
+      // Handle permission denial or provide a user-friendly message
+    }
+
+    // await recorder.openRecorder();
+    // isRecorderReady = true;
+    // recorder.setSubscriptionDuration(const Duration(milliseconds: 500));
   }
+
 
   Future startRecording() async {
     if (recorder.isPaused) {
       await recorder.resumeRecorder();
-    } else {
-      await recorder.startRecorder(toFile: 'audio');
     }
-    // await recorder.startRecorder(toFile: 'audio');
 
-    // final filePath = await getTemporaryDirectory().then((dir) {
-    //   return dir.path + '/your_audio_filename.mp3';
-    // });
+      if(isRecorderReady){
+        // final externalDirectory = await getExternalStorageDirectory();
+        // final filePath = '${externalDirectory?.path}/audio.mp3';
 
-    // await recorder.startRecorder(toFile: filePath);
-    // return filePath; // Return the file path
+        // await recorder.startRecorder(toFile: filePath);
+        await recorder.startRecorder(toFile: 'audio');
+
+      }
+      else {
+        print("Recorder is not ready. Initialize it first.");
+      }
+
+    // final status = await Permission.storage.request();
+    // if (status.isGranted) {
+    // final externalDirectory = await getExternalStorageDirectory();
+    // final filePath = '${externalDirectory?.path}/audio.mp3';
+    //
+    // await recorder.startRecorder(toFile: filePath );
+    // }
+    // else{
+    //   print("not granted");
+    // }
+
+      // await recorder.startRecorder(toFile: 'audio');
+
+
+
+
   }
+
+
+
+
 
   Future<void> pauseRecording() async {
     if (recorder.isRecording) {
@@ -77,49 +118,42 @@ class _RecordingScreen extends State<RecordingScreen> {
     if (!isRecorderReady) return;
     final path = await recorder.stopRecorder();
     final audioFile = File(path!);
+    saveToExternalStorage(path);
     print("Recording audio: $audioFile");
   }
 
-  //
-  // late final Record _recorder;
-  // bool _isRecording = false;
-  // String? _filePath;
-  // _startRecording() async {
-  //   bool hasPermission = await _recorder.hasPermission();
-  //
-  //   if (hasPermission) {
-  //     setState(() {
-  //       _isRecording = true;
-  //       _filePath = null;
-  //     });
-  //
-  //     await _recorder.start();
-  //   }
-  // }
-  // _stopRecording() async {
-  //   final path = await _recorder.stop();
-  //
-  //   log('Recording complete, path: $path');
-  //
-  //   if (path != null) {
-  //     setState(() {
-  //       _isRecording = false;
-  //       _filePath = path;
-  //     });
-  //   }
-  // }
-  //
-  // @override
-  // void initState() {
-  //   _recorder = Record();
-  //   super.initState();
-  // }
-  //
-  // @override
-  // void dispose() {
-  //   _recorder.dispose();
-  //   super.dispose();
-  // }
+  Future saveToExternalStorage(String sourcePath) async {
+    final externalDirectory = await getExternalStorageDirectory();
+    final fileName = 'audio.mp3'; // Choose a custom filename
+    final destinationPath = '${externalDirectory?.path}/$fileName';
+
+    try {
+      File sourceFile = File(sourcePath);
+      await sourceFile.copy(destinationPath);
+      print("Audio file saved to external storage: $destinationPath");
+    } catch (e) {
+      print("Error saving audio to external storage: $e");
+    }
+
+
+  }
+  void playRecordedAudio() async {
+    final externalDirectory = await getExternalStorageDirectory();
+    const fileName = 'audio.mp3'; // Ensure this matches the saved file's name
+    final filePath = '${externalDirectory?.path}/$fileName';
+
+   await audioPlayer.play(DeviceFileSource(filePath));
+    // if (result == 1) {
+    //   print("Audio file is now playing.");
+    // } else {
+    //   print("Error playing audio.");
+    }
+
+
+
+
+
+
 
   @override
   Widget build(BuildContext context) {
@@ -233,12 +267,15 @@ class _RecordingScreen extends State<RecordingScreen> {
                         color: Colors.white,
                       ),
                       child: IconButton(
-                        onPressed: () {},
+                        onPressed: () {
+                          playRecordedAudio();
+                        },
                         icon: const Icon(
                           Icons.save,
                           size: 40,
                           color: Colors.black87,
                         ),
+
                       )),
                 ],
               ),

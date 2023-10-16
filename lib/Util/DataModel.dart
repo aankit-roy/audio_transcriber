@@ -1,6 +1,6 @@
 class DataModel {
-   final String  Title ;
-     final String Time;
+   final String  title ;
+     final String time;
 
-  DataModel(this.Title,this.Time);
+  DataModel(this.title,this.time);
 }

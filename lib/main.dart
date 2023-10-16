@@ -1,19 +1,20 @@
 import 'dart:convert';
+
 import 'dart:io';
 
 import 'package:audio_transcriber/Screens/HomeScreen.dart';
 import 'package:flutter/material.dart';
 import 'package:audio_transcriber/Screens/RecordingScreen.dart';
 import 'package:flutter/services.dart';
-import 'package:flutter_sound/flutter_sound.dart';
-import 'package:permission_handler/permission_handler.dart';
+// import 'package:flutter_sound/flutter_sound.dart';
+// import 'package:permission_handler/permission_handler.dart';
 
 // ignore: depend_on_referenced_packages
-import 'package:animated_bottom_navigation_bar/animated_bottom_navigation_bar.dart';
+// import 'package:animated_bottom_navigation_bar/animated_bottom_navigation_bar.dart';
 
 
-import 'Util/DataModel.dart';
-import 'package:path_provider/path_provider.dart';
+// import 'Util/DataModel.dart';
+// import 'package:path_provider/path_provider.dart';
 
 void main() {
 
@@ -65,7 +66,7 @@ class _MainScreenState extends State<MainScreen> {
       floatingActionButton: FloatingActionButton(
 
 
-          child: Icon(
+          child: const Icon(
             Icons.mic,
             color: Colors.black,
           ),
@@ -84,8 +85,9 @@ class _MainScreenState extends State<MainScreen> {
           }),
       floatingActionButtonLocation: FloatingActionButtonLocation.centerFloat,
 
-      body: Container(
-          child: HomeScreen()),
+      body: SafeArea( child:  HomeScreen(),),
+
+
     );
   }
 }

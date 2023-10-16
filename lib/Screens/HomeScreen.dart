@@ -1,7 +1,10 @@
+import 'dart:io';
+
 import 'package:audio_transcriber/Util/DataModel.dart';
 
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:permission_handler/permission_handler.dart';
 import 'package:animated_bottom_navigation_bar/animated_bottom_navigation_bar.dart';
 
 class HomeScreen extends StatefulWidget {
@@ -10,6 +13,10 @@ class HomeScreen extends StatefulWidget {
 }
 
 class _HomeScreenState extends State<HomeScreen> {
+
+
+
+
   List<DataModel> itemList = [
     (DataModel("First", "2:00")),
     (DataModel("First", "2:00")),
@@ -42,6 +49,7 @@ class _HomeScreenState extends State<HomeScreen> {
   Widget build(BuildContext context) {
     // TODO: implement build
     return Stack(
+
       children: <Widget>[
         CustomScrollView(
           slivers: <Widget>[
@@ -71,7 +79,7 @@ class _HomeScreenState extends State<HomeScreen> {
               //     child: Text("This is recording"),
               //   ),
               // ),
-              flexibleSpace: FlexibleSpaceBar(
+              flexibleSpace: const FlexibleSpaceBar(
                 centerTitle: true,
                 collapseMode: CollapseMode.pin,
                 title: Text(
@@ -118,11 +126,11 @@ class _HomeScreenState extends State<HomeScreen> {
                   ),
                   child: ListTile(
                     title: Text(
-                      dataModel.Title,
+                      dataModel.title,
                       style: const TextStyle(
                           fontSize: 20, fontWeight: FontWeight.bold),
                     ),
-                    subtitle: Text(dataModel.Time),
+                    subtitle: Text(dataModel.time),
                     leading: const Icon(
                       Icons.music_note,
                       color: Colors.black,

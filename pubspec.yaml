@@ -47,12 +47,14 @@ dev_dependencies:
   flutter_sound: ^9.2.13
   permission_handler: ^11.0.1
   path_provider: ^2.1.1
-#  audioplayers: ^0.20.1
+  audioplayers: ^5.2.0
   record: ^3.0.3
   tuple: ^2.0.0
   printing: ^5.7.4
   font_awesome_flutter: ^10.0.0
   avatar_glow: ^2.0.2
+  path: ^1.8.3
+  intl: ^0.18.1
 
   # The "flutter_lints" package below contains a set of recommended lints to
   # encourage good coding practices. The lint set provided by the package is
